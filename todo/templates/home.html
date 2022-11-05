@@ -1,0 +1,15 @@
+{% comment %} {% extends "base.html" %}  {% endcomment %}
+
+{% block title %}Home page{% endblock %}
+{% block body %} 
+
+
+
+<hr>
+{% for task in tasks %}
+    {{ task.name }} <br>
+    {{ task.description }}
+    <hr>
+{% endfor %}
+
+{% endblock %}

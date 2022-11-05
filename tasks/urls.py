@@ -15,14 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from todo.views import TaskListView
 from todo import views
 from django.conf import settings
 from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('tasks/', views.task_list),
     path('tasks/<int:id>/', views.task_detail),
+    path('', TaskListView.as_view(), name='index'),
 ]
 # imp for what you want to achieve.
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

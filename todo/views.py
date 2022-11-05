@@ -4,6 +4,8 @@ from .serializers import TaskSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from django.views.generic import TemplateView, DetailView, FormView
+import os
 
 
 @api_view(['GET', 'POST'])
@@ -39,3 +41,12 @@ def task_detail(request, id, format=None):
     elif request.method == 'DELETE':
         task.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TaskListView(TemplateView):
+    template_name = 'home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tasks'] = Task.objects.all().order_by('-id')
+        return context
