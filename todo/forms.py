@@ -3,6 +3,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 
+class TaskForm(forms.Form):
+    name = forms.CharField()
+    description = forms.CharField()
+
+
 class NewUserForm(UserCreationForm):
     email = forms.EmailField(required=True)
 

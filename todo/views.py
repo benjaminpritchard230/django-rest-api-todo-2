@@ -14,6 +14,7 @@ from .forms import NewUserForm
 from django.contrib.auth import login, authenticate  # add this
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm  # add this
+from .forms import TaskForm
 
 
 @api_view(['GET', 'POST'])
@@ -59,6 +60,26 @@ class TaskListView(TemplateView):
         context['tasks'] = Task.objects.filter(
             user=self.request.user).order_by('-id')
         return context
+
+
+class AddTaskView(FormView):
+    template_name = 'new_task.html'
+    form_class = TaskForm
+    success_url = '/'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.request = request
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        new_object = Task.objects.create(
+            name=form.cleaned_data['name'],
+            description=form.cleaned_data['description'],
+            user=self.request.user,
+        )
+        messages.add_message(self.request, messages.SUCCESS,
+                             'Your task was created successfully.')
+        return super().form_valid(form)
 
 
 def register_request(request):
