@@ -56,7 +56,8 @@ class TaskListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['tasks'] = Task.objects.all().order_by('-id')
+        context['tasks'] = Task.objects.filter(
+            user=self.request.user).order_by('-id')
         return context
 
 
@@ -83,8 +84,9 @@ def login_request(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                messages.info(request, f"You are now logged in as {username}.")
-                return redirect("index:homepage")
+                messages.success(
+                    request, f"You are now logged in as {username}.")
+                return redirect("/")
             else:
                 messages.error(request, "Invalid username or password.")
         else:
