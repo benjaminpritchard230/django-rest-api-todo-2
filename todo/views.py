@@ -11,10 +11,12 @@ from django.contrib.auth import login
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from .forms import NewUserForm
-from django.contrib.auth import login, authenticate  # add this
+from django.contrib.auth import login, logout, authenticate  # add this
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm  # add this
 from .forms import TaskForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 @api_view(['GET', 'POST'])
@@ -52,7 +54,7 @@ def task_detail(request, id, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class TaskListView(TemplateView):
+class TaskListView(LoginRequiredMixin, TemplateView):
     template_name = 'home.html'
 
     def get_context_data(self, **kwargs):
@@ -114,3 +116,10 @@ def login_request(request):
             messages.error(request, "Invalid username or password.")
     form = AuthenticationForm()
     return render(request=request, template_name="login.html", context={"login_form": form})
+
+
+def logout_request(request):
+    logout(request)
+    messages.success(
+        request, f"You are now logged out.")
+    return redirect("/")
