@@ -20,12 +20,14 @@ from todo import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-
+app_name = 'tasks'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('tasks/', views.task_list),
     path('tasks/<int:id>/', views.task_detail),
     path('', TaskListView.as_view(), name='index'),
+    path("register/", views.register_request, name="register"),
+    path("login/", views.login_request, name="login"),
 ]
 # imp for what you want to achieve.
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
