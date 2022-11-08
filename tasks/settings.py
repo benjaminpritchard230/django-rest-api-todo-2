@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
     'todo',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -138,3 +139,9 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 LOGIN_URL = '/login'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}

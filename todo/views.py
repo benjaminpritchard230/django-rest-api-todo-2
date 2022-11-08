@@ -17,6 +17,11 @@ from django.contrib.auth.forms import AuthenticationForm  # add this
 from .forms import TaskForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework.views import APIView
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
+from django.contrib.auth.models import User
 
 
 @api_view(['GET', 'POST'])
@@ -29,6 +34,24 @@ def task_list(request, format=None):
         serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class ListTasks(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        if request.method == "GET":
+            tasks = Task.objects.filter(user=self.request.user)
+            serializer = TaskSerializer(tasks, many=True)
+            return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = TaskSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=self.request.user)
+            print(self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -64,7 +87,7 @@ class TaskListView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class AddTaskView(FormView):
+class AddTaskView(LoginRequiredMixin, FormView):
     template_name = 'new_task.html'
     form_class = TaskForm
     success_url = '/'
