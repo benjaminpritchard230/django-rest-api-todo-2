@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from todo.views import TaskListView, AddTaskView, ListTasks
+from todo.views import TaskListView, AddTaskView, ListTasks, SpecificTask
 from todo import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -23,10 +23,11 @@ from rest_framework.authtoken.views import obtain_auth_token
 app_name = 'tasks'
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('tasks/', views.task_list),
-    path('tasks/<int:id>/', views.task_detail),
+    # Api views
+    path('tasks/', ListTasks.as_view(), name="tasks"),
     path('login_api/', obtain_auth_token, name="login"),
-    path('tasks_class/', ListTasks.as_view(), name="tasks_class"),
+    path('tasks/<int:id>/', SpecificTask.as_view(), name="specific_task"),
+    # Templates views
     path('', TaskListView.as_view(), name='index'),
     path("register/", views.register_request, name="register"),
     path("login/", views.login_request, name="login"),

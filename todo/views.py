@@ -24,19 +24,6 @@ from rest_framework import authentication, permissions
 from django.contrib.auth.models import User
 
 
-@api_view(['GET', 'POST'])
-def task_list(request, format=None):
-    if request.method == "GET":
-        tasks = Task.objects.all()
-        serializer = TaskSerializer(tasks, many=True)
-        return Response(serializer.data)
-    elif request.method == 'POST':
-        serializer = TaskSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
 class ListTasks(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
@@ -53,6 +40,48 @@ class ListTasks(APIView):
             serializer.save(user=self.request.user)
             print(self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class SpecificTask(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, id, format=None):
+        try:
+            task = Task.objects.get(pk=id)
+        except Task.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if task.user == self.request.user:
+            serializer = TaskSerializer(task)
+            return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    def put(self, request, id, format=None):
+        try:
+            task = Task.objects.get(pk=id)
+        except Task.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = TaskSerializer(task, data=request.data)
+        if task.user == self.request.user:
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    def delete(self, request, id, format=None):
+        try:
+            task = Task.objects.get(pk=id)
+
+        except Task.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if task.user == self.request.user:
+            task.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
