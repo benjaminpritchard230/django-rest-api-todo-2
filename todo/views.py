@@ -128,7 +128,6 @@ class AddTaskView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         new_object = Task.objects.create(
             name=form.cleaned_data['name'],
-            description=form.cleaned_data['description'],
             user=self.request.user,
         )
         messages.add_message(self.request, messages.SUCCESS,

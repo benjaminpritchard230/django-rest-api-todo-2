@@ -11,9 +11,8 @@ class Task(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name="todolist", null=True)  # <--- added
     name = models.CharField(max_length=200)
-    description = models.CharField(max_length=200)
     created_on = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    image = models.ImageField(blank=True, null=True)
+    done = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
