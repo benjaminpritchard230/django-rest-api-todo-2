@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from todo.views import TaskListView, AddTaskView, ListTasks, SpecificTask
+from todo.views import TaskListView, AddTaskView, ListTasks, SpecificTask, RegisterUserView
 from todo import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -29,7 +29,7 @@ urlpatterns = [
     path('tasks/<int:id>/', SpecificTask.as_view(), name="specific_task"),
     # Templates views
     path('', TaskListView.as_view(), name='index'),
-    path("register/", views.user_create, name="register"),
+    path("register/", RegisterUserView.as_view(), name="register"),
     path("login/", views.login_request, name="login"),
     path("logout/", views.logout_request, name="logout"),
     path("new/", AddTaskView.as_view(), name="new"),

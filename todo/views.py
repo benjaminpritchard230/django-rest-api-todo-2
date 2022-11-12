@@ -24,6 +24,9 @@ from rest_framework import authentication, permissions
 from django.contrib.auth.models import User
 from rest_framework.permissions import AllowAny
 
+# Class based api view for getting the list of tasks corresponding
+# to a token or posting a new task to a specific user's task list
+
 
 class ListTasks(APIView):
     authentication_classes = [authentication.TokenAuthentication]
@@ -41,6 +44,9 @@ class ListTasks(APIView):
             serializer.save(user=self.request.user)
             print(self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+# Class based  api view for getting a specific task based on ID, putting new
+# information for a task with a specific ID or deleting a task with a specific ID
 
 
 class SpecificTask(APIView):
@@ -84,27 +90,7 @@ class SpecificTask(APIView):
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-
-@api_view(['GET', 'PUT', 'DELETE'])
-def task_detail(request, id, format=None):
-
-    try:
-        task = Task.objects.get(pk=id)
-    except Task.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == "GET":
-        serializer = TaskSerializer(task)
-        return Response(serializer.data)
-    elif request.method == 'PUT':
-        serializer = TaskSerializer(task, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
-    elif request.method == 'DELETE':
-        task.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+# Class based template-view for displaying the current user's list of tasks
 
 
 class TaskListView(LoginRequiredMixin, TemplateView):
@@ -115,6 +101,8 @@ class TaskListView(LoginRequiredMixin, TemplateView):
         context['tasks'] = Task.objects.filter(
             user=self.request.user).order_by('-id')
         return context
+
+# Class based template-view for adding a task to the current user's task list
 
 
 class AddTaskView(LoginRequiredMixin, FormView):
@@ -134,6 +122,16 @@ class AddTaskView(LoginRequiredMixin, FormView):
         messages.add_message(self.request, messages.SUCCESS,
                              'Your task was created successfully.')
         return super().form_valid(form)
+
+# Class based api view for registering a new user with a username and password
+
+
+class RegisterUserView(APIView):
+    def post(self, request):
+        serializer = CreateUserSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return JsonResponse(serializer.data, safe=False)
 
 
 def register_request(request):
@@ -177,11 +175,23 @@ def logout_request(request):
     return redirect("/")
 
 
-@api_view(['POST'])
-def user_create(request):
-    if request.method == 'POST':
-        print(request.data)
-        serializer = CreateUserSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
+@api_view(['GET', 'PUT', 'DELETE'])
+def task_detail(request, id, format=None):
+
+    try:
+        task = Task.objects.get(pk=id)
+    except Task.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == "GET":
+        serializer = TaskSerializer(task)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = TaskSerializer(task, data=request.data)
+        if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, safe=False)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+    elif request.method == 'DELETE':
+        task.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
