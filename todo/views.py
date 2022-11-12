@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from .models import Task
-from .serializers import TaskSerializer
+from .serializers import TaskSerializer, CreateUserSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -22,6 +22,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from django.contrib.auth.models import User
+from rest_framework.permissions import AllowAny
 
 
 class ListTasks(APIView):
@@ -174,3 +175,13 @@ def logout_request(request):
     messages.success(
         request, f"You are now logged out.")
     return redirect("/")
+
+
+@api_view(['POST'])
+def user_create(request):
+    if request.method == 'POST':
+        print(request.data)
+        serializer = CreateUserSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return JsonResponse(serializer.data, safe=False)

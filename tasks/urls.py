@@ -29,7 +29,7 @@ urlpatterns = [
     path('tasks/<int:id>/', SpecificTask.as_view(), name="specific_task"),
     # Templates views
     path('', TaskListView.as_view(), name='index'),
-    path("register/", views.register_request, name="register"),
+    path("register/", views.user_create, name="register"),
     path("login/", views.login_request, name="login"),
     path("logout/", views.logout_request, name="logout"),
     path("new/", AddTaskView.as_view(), name="new"),
