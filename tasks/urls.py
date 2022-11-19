@@ -15,8 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from todo.views import TaskListView, AddTaskView, ListTasks, SpecificTask, RegisterUserView
-from todo import views
+from todo.views import *
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.authtoken.views import obtain_auth_token
@@ -24,15 +23,10 @@ app_name = 'tasks'
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Api views
-    path('tasks/', ListTasks.as_view(), name="tasks"),
-    path('login_api/', obtain_auth_token, name="login"),
-    path('tasks/<int:id>/', SpecificTask.as_view(), name="specific_task"),
-    # Templates views
-    path('', TaskListView.as_view(), name='index'),
+    path('tasks/', ListImagePosts.as_view(), name="tasks"),
+    path('login/', obtain_auth_token, name="login"),
+    path('posts/<int:id>/', SpecificImagePost.as_view(), name="specific_task"),
     path("register/", RegisterUserView.as_view(), name="register"),
-    path("login/", views.login_request, name="login"),
-    path("logout/", views.logout_request, name="logout"),
-    path("new/", AddTaskView.as_view(), name="new"),
 ]
 # imp for what you want to achieve.
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

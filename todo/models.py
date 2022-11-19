@@ -7,12 +7,11 @@ from rest_framework.authtoken.models import Token
 # Create your models here.
 
 
-class Task(models.Model):
+class ImagePost(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,
-                             related_name="todolist", null=True)  # <--- added
-    name = models.CharField(max_length=200)
+                             related_name="todolist", null=True)
+    caption = models.CharField(max_length=200)
     created_on = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    done = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
