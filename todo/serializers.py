@@ -1,13 +1,13 @@
 from rest_framework import serializers
-from .models import ImagePost
+from .models import Task
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 
 
-class ImagePostSerializer(serializers.ModelSerializer):
+class TaskSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ImagePost
-        fields = ['id', 'user', 'caption', 'created_on', ]
+        model = Task
+        fields = ['id', 'name', 'created_on', 'user', 'done']
         read_only_fields = ['user', 'created_on']
 
 

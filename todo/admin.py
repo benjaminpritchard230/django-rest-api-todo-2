@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ImagePost
+from .models import Task
 # Register your models here.
 
-admin.site.register(ImagePost)
+admin.site.register(Task)
